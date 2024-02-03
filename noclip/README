@@ -1,0 +1,22 @@
+noclip
+======
+
+a tool to push camera snaps to clipboard
+
+usage
+-----
+
+- connect your phone to your computer via usb
+- snap a picture w/ your phone camera
+- paste it anywhere on your pc
+
+dependencies
+------------
+
+- xclip
+
+note
+----
+
+- linux/unix only
+- still a prototype

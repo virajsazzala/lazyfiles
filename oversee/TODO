@@ -1,0 +1,10 @@
+TODO
+====
+
+[ ] PATH can have .c / .cpp extensions
+[ ] Maybe extract extension from filename
+[ ] Fix the double notify issue
+[ ] Write make file
+[ ] Possibly VSC extension?
+[ ] Clean up
+[ ] Extend to python

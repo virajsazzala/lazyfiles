@@ -1,0 +1,23 @@
+#!/bin/bash
+
+album_path="/run/user/1000/gvfs/mtp:host=SAMSUNG_SAMSUNG_Android_RZ8R40514QP/Internal storage/DCIM/noclip"
+
+if [ ! -d "$album_path" ]; then
+	echo "Error: Album not found. Check device connection!"
+	exit 1
+fi
+
+image=$(find "$album_path" -type f -exec ls -t1 {} + | head -1)
+
+if ! command -v xclip &> /dev/null; then
+    echo "Error: xclip is not installed. Please install it first."
+	exit 1
+fi
+
+if [ ! -f "$image" ]; then
+   	echo "Error: Image file not found."
+    exit 1
+fi
+
+xclip -selection clipboard -t image/png -i "$image"
+echo "Image copied to clipboard!"

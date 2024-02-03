@@ -1,0 +1,19 @@
+oversee
+=======
+
+An auto-reloader for C and C++ files
+
+usage
+-----
+
+oversee <TYPE> <FILE>
+
+- TYPE: -c or -cpp
+- FILE: name of the file, exclude extension
+
+ex: oversee -c test
+
+note
+----
+
+- being built, not completed, but can be used
