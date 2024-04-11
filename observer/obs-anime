@@ -1,0 +1,51 @@
+#!/bin/bash
+
+ENV_PATH="$HOME/.env"
+
+source "$ENV_PATH"
+
+# parse animepahe json
+JSON_DATA=$(curl -s -H "Accept: application/json, text/javascript, */*; q=0.01" \
+    -H "Cookie: $ANIME_COOKIE" \
+    -X GET $ANIME_SITE_API)
+
+content_len=$(($(jq -r '.per_page' <<< "$JSON_DATA") - 1))
+
+# parse bookmarks
+BOOKMARKS=$(<$HOME/.local/bin/bookmarks.json)
+mapfile -t anime_names < <(jq -r '.[] | .anime_name' <<< "$BOOKMARKS")
+mapfile -t episodes < <(jq -r '.[] | .eps' <<< "$BOOKMARKS")
+
+bookm_len=$(($(jq length <<< "$BOOKMARKS") - 1))
+
+# parse through each entry
+for i in $(seq 0 "$content_len"); do
+    # find the title
+    anime=$(jq -r ".data[$i].anime_title" <<< "$JSON_DATA")
+    episode=$(jq -r ".data[$i].episode" <<< "$JSON_DATA")
+    anime_session=$(jq -r ".data[$i].anime_session" <<< "$JSON_DATA")
+    session=$(jq -r ".data[$i].session" <<< "$JSON_DATA")
+
+    # verify if new ep
+    for j in $(seq 0 "$bookm_len"); do
+        anime_name=${anime_names[$j]}
+        eps=${episodes[$j]}
+        if [[ "${anime,,}" == "${anime_name,,}" ]] && [ "$episode" -eq "$eps" ]; then
+            message=$(echo "Episode $eps of $anime_name is out NOW!")
+            link=$(echo "https://animepahe.ru/play/$anime_session/$session")
+
+            # send notification on linux pc
+            notify-send "$message"
+            echo "$link" | xclip -selection clipboard
+            
+            # send notification to telegram
+            curl -s -X POST https://api.telegram.org/bot$OBSANIME_BOT_TOKEN/sendMessage -d chat_id=$MYCHATID -d text="$message - $link" > /dev/null
+            
+            # update ep for observing
+            epsinc=$((eps + 1))
+            json_update=$(jq --argjson j "$j" --arg epsinc "$epsinc" 'to_entries | .[$j].value.eps = ($epsinc | tonumber) | from_entries' <<< "$BOOKMARKS")
+            echo "$json_update" > $HOME/.local/bin/bookmarks.json
+        fi
+    done
+done
+

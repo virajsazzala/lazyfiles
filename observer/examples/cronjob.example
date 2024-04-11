@@ -1,0 +1,2 @@
+# runs every 20mins
+*/20 * * * * env DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus /home/exvynai/.local/bin/obs-anime >> /home/exvynai/cron.log 2>&1

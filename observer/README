@@ -1,0 +1,18 @@
+observer
+========
+
+It keeps track of websites, and notifies the user on specified updates.
+
+setup & installation
+--------------------
+
+
+note-to-self
+------------
+
+- update bookmarks with cmds.
+- should write a setup script.
+- currently:
+    .env           ->  home dir
+    obs-anime      -> .local/bin
+    bookmarks.json -> .local/bin
